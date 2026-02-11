@@ -1,14 +1,21 @@
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import { OpenAIEmbeddings } from "langchain/embeddings/openai";
-import { MemoryVectorStore } from "langchain/vectorstores/memory";
-import { RetrievalQAChain } from "langchain/chains";
-import { ChatOpenAI } from "langchain/chat_models/openai";
-import { PromptTemplate } from "langchain/prompts";
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 
-import { PDFLoader } from "langchain/document_loaders/fs/pdf";
+import { OpenAIEmbeddings, ChatOpenAI } from "@langchain/openai";
+
+import { MemoryVectorStore } from "langchain/vectorstores/memory";
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+
+import { RetrievalQAChain } from "langchain/chains";
+import { PromptTemplate } from "@langchain/core/prompts";
 
 // NOTE: change this default filePath to any of your default file name
 const chat = async (filePath = "./uploads/hbs-lean-startup.pdf", query) => {
+  const openAIApiKey =
+    process.env.OPENAI_API_KEY || process.env.REACT_APP_OPENAI_API_KEY;
+  if (!openAIApiKey) {
+    throw new Error("Missing OPENAI_API_KEY in server/.env");
+  }
+
   // step 1: 读取pdf文本
   const loader = new PDFLoader(filePath);
 
@@ -25,12 +32,12 @@ const chat = async (filePath = "./uploads/hbs-lean-startup.pdf", query) => {
   // step 3:
 
   const embeddings = new OpenAIEmbeddings({
-    openAIApiKey: process.env.REACT_APP_OPENAI_API_KEY,
+    openAIApiKey,
   });
 
   const vectorStore = await MemoryVectorStore.fromDocuments(
     splitDocs,
-    embeddings
+    embeddings,
   );
 
   // step 4: retrieval
@@ -42,7 +49,7 @@ const chat = async (filePath = "./uploads/hbs-lean-startup.pdf", query) => {
   // step 5: qa w/ customzie the prompt
   const model = new ChatOpenAI({
     modelName: "gpt-3.5-turbo",
-    openAIApiKey: process.env.REACT_APP_OPENAI_API_KEY,
+    openAIApiKey,
   });
 
   const template = `Use the following pieces of context to answer the question at the end.

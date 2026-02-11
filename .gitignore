@@ -1,28 +1,43 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/client/node_modules
-/.pnp
+# Node dependencies
+node_modules/
+**/node_modules/
+.pnp
 .pnp.js
 
-# testing
-/coverage
-
-# production
-/build
-
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
+# Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# .env
+# Env files (keep examples)
+.env
+.env.*
+!.env.example
+!.env.*.example
 server/.env
+client/.env
 
-server/node_modules
+# Build artifacts
+build/
+dist/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+
+# Tool caches
+.cache/
+.eslintcache
+.parcel-cache/
+
+# Uploads/runtime data
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json

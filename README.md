@@ -1,70 +1,165 @@
-# Getting Started with Create React App
+# NextAI
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<p align="center">
+  Upload a PDF, ask natural-language questions, and get concise answers powered by LangChain + OpenAI.
+</p>
 
-## Available Scripts
+<p align="center">
+  <img src="https://img.shields.io/badge/Frontend-React%2018-61DAFB?logo=react&logoColor=white" alt="React">
+  <img src="https://img.shields.io/badge/Backend-Express-000000?logo=express&logoColor=white" alt="Express">
+  <img src="https://img.shields.io/badge/AI-LangChain-1C3C3C" alt="LangChain">
+  <img src="https://img.shields.io/badge/Model-OpenAI-10A37F?logo=openai&logoColor=white" alt="OpenAI">
+  <img src="https://img.shields.io/badge/Node.js-%3E%3D18-339933?logo=node.js&logoColor=white" alt="Node.js">
+</p>
 
-In the project directory, you can run:
+<p align="center">
+  <a href="./README.zh-CN.md">中文文档</a>
+</p>
 
-### `npm start`
+## Overview
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+NextAI is a full-stack PDF Q&A demo:
+- Frontend: React (Create React App)
+- Backend: Express + LangChain
+- LLM Provider: OpenAI
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Flow:
+1. Upload a PDF to the server.
+2. Split document text into chunks.
+3. Build embeddings and an in-memory vector store.
+4. Ask questions and retrieve context-aware answers.
 
-### `npm test`
+## Project Structure
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```text
+NextAI/
+├─ client/                  # React frontend
+├─ server/                  # Express backend
+│  ├─ server.js             # API entry
+│  ├─ chat.js               # LangChain retrieval + QA logic
+│  └─ uploads/              # Runtime upload directory
+├─ package.json             # Root scripts (run frontend + backend together)
+├─ README.md
+└─ README.zh-CN.md
+```
 
-### `npm run build`
+## Quick Start
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 1) Install dependencies
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+npm install
+npm install --prefix client
+npm install --prefix server
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 2) Configure environment variables
 
-### `npm run eject`
+Create `server/.env`:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```env
+OPENAI_API_KEY=your_openai_api_key
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Notes:
+- `OPENAI_API_KEY` is the preferred key.
+- `REACT_APP_OPENAI_API_KEY` is still accepted for backward compatibility.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 3) Run the app
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Run frontend + backend together:
 
-## Learn More
+```bash
+npm run dev
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Or run them separately:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+# Frontend: http://localhost:3000
+npm run start --prefix client
 
-### Code Splitting
+# Backend: http://localhost:5001
+npm run dev --prefix server
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## API Reference
 
-### Analyzing the Bundle Size
+Base URL: `http://localhost:5001`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### `POST /upload`
 
-### Making a Progressive Web App
+Upload a PDF file.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- Content type: `multipart/form-data`
+- Field name: `file`
 
-### Advanced Configuration
+```bash
+curl -X POST http://localhost:5001/upload \
+  -F "file=@/absolute/path/to/your.pdf"
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### `GET /chat?question=...`
 
-### Deployment
+Ask a question against the uploaded PDF.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```bash
+curl "http://localhost:5001/chat?question=What is this document about?"
+```
 
-### `npm run build` fails to minify
+## Scripts
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Root:
+
+```bash
+npm run dev      # Start client + server in parallel
+npm run client   # Start frontend only
+npm run server   # Start backend only (dev mode)
+```
+
+Client (`client/`):
+
+```bash
+npm run start
+npm run build
+npm run test
+```
+
+Server (`server/`):
+
+```bash
+npm run dev
+npm run start
+```
+
+## Troubleshooting
+
+### `EMFILE: too many open files` (nodemon)
+
+The backend dev script already uses a reduced watch scope and legacy mode:
+`nodemon -L --watch server.js --watch chat.js server.js`.
+
+### `Missing OPENAI_API_KEY in server/.env`
+
+Make sure `server/.env` exists and contains:
+
+```env
+OPENAI_API_KEY=...
+```
+
+### Frontend cannot reach backend
+
+Check:
+- Backend is running on `http://localhost:5001`
+- Frontend API target points to port `5001`
+
+## Roadmap
+
+- Persist vector store to disk/database
+- Add multi-file upload and document management
+- Add auth + per-user document isolation
+- Improve prompt templates and answer citation
+
+## License
+
+MIT (or your preferred license)

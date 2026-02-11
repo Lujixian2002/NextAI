@@ -1,0 +1,12 @@
+{
+  "name": "nextai-root",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run start --prefix client\" \"npm run dev --prefix server\"",
+    "client": "npm run start --prefix client",
+    "server": "npm run dev --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
