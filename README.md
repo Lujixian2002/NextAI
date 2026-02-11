@@ -160,6 +160,3 @@ Check:
 - Add auth + per-user document isolation
 - Improve prompt templates and answer citation
 
-## License
-
-MIT (or your preferred license)
