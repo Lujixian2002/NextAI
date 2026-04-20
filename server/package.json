@@ -2,28 +2,23 @@
   "name": "nextai-server",
   "version": "1.0.0",
   "private": true,
-
   "type": "module",
   "main": "server.js",
-
   "scripts": {
-    "dev": "nodemon -L --watch server.js --watch chat.js server.js",
+    "dev": "nodemon -L --watch server.js --watch chat.js --watch courseStore.js --watch vectorStore.js server.js",
     "start": "node server.js"
   },
-
   "dependencies": {
-    "express": "^4.19.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "multer": "^1.4.5-lts.1",
-
+    "@langchain/community": "^0.2.30",
     "@langchain/core": "^0.2.30",
     "@langchain/openai": "^0.2.8",
-    "@langchain/community": "^0.2.30",
     "@langchain/textsplitters": "^0.0.3",
-    "langchain": "^0.2.3"
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.20.0"
   },
-
   "devDependencies": {
     "nodemon": "^3.1.11"
   }
